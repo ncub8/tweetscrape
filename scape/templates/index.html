@@ -1,0 +1,115 @@
+<!doctype HTML>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+
+        <!-- Optional theme -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
+
+        <!-- Latest compiled and minified JavaScript -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/masonry/3.2.2/masonry.pkgd.js"></script>
+        <script type="text/javascript"
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAzaQ46kaKTR3RD1h0HYwx4Nk62Z9SnF-8">
+    </script>
+    <script type="text/javascript">
+      function initialize() {
+        var mapOptions = {
+          center: { lat: -34.397, lng: 150.644},
+          zoom: 8
+        };
+        var map = new google.maps.Map(document.getElementById('map-canvas'),
+            mapOptions);
+      }
+      google.maps.event.addDomListener(window, 'load', initialize);
+    </script>
+        <style>
+            .show-grid div{
+                background-color: #CCCCCC;
+                border: 1px solid #000000;
+                padding-top: 10px;
+                padding-bottom: 10px;
+                margin-top: 4px;
+                margin-right: 4px;
+                padding: 10px;
+            }
+            
+        </style>
+    </head>
+    <body>
+        <header class="navbar navbar-default navbar-static-top navbar-reverse" id="top" role="banner">
+          <div class="container-fluid">
+            <div class="navbar-header">
+                <a href="../" class="navbar-brand">Tweetscraper</a>
+            </div>
+            </div>
+        </header>
+        
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-4">
+                    <table class="table table-hover table-striped">
+                        <thead>
+                            <tr><th>US Trends</th></tr>
+                        </thead>
+                        <tbody>
+                            {% for trend in trends %}
+                            <tr>
+                                <td class="trend" data-term="{{ trend.query }}"><a href="#">{{ trend.name }}</a></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                        
+                    </table>    
+                   
+                </div>
+                <div class="col-md-8 col-sm-8" id="tweets">
+                    <h4 class="hidden" id="pop">Popular Tweets</h4>
+                    <div class="row show-grid" id="tweetcontainer"></div>
+                <div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div id="map-canvas"></div>
+                </div>
+            </div>
+        </div>
+        <script>
+            //temporary inline script
+            $(function(){
+                //set up clicking on a trending topic
+                $(".trend").on('click',function(evt){
+                    var term = $(this).data('term');
+                    $.getJSON( "api/" + term)
+                        .done(function(json){
+                            var tweets = [];
+                            console.log(json)
+                            console.log(json['statuses']);
+                            $.each(json.statuses, function(index, value){
+                                tweets.push("<div class='col-sm-4 tweet'>" + value.text + "</div>")
+                            });
+                            
+                            $("#tweetcontainer").html(tweets.join(""));
+                            $("#tweetcontainer").masonry({
+                              columnWidth: 200,
+                              itemSelector: '.tweet'
+                            });
+                            $("#pop").removeClass("hidden");
+                        })
+                        .fail(function(jqxhr, textStatus, error){
+                            console.log(error)
+                    });
+                  
+                });
+            });
+        </script>
+        
+    </body>
+</html>
