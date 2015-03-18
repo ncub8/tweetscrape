@@ -14,6 +14,7 @@ def index():
 @app.route('/api/<term>')
 #@decorators.accept("application/json")
 def get_tweets(term):
+    tweets = get_popular(term)
     data = json.dumps(get_popular(term))
     #headers = {"Location": url_for("get_tweets")}
     return Response(data, 201, mimetype="application/json")

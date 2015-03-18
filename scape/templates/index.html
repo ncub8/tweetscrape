@@ -68,7 +68,19 @@
                         </tbody>
                         
                     </table>    
-                   
+                    <h4 class="hidden" id="common-header">10 most common words</h4>
+                    <table class="table table-striped hidden" id="mostcommon">
+                        <thead>
+                            <tr>
+                                <th>Word</th>
+                                <th>Count</th>
+                            </tr>
+                            
+                        </thead>
+                        <tbody>
+                            
+                        </tbody>
+                    </table>
                 </div>
                 <div class="col-md-8 col-sm-8" id="tweets">
                     <h4 class="hidden" id="pop">Popular Tweets</h4>
@@ -90,18 +102,26 @@
                     $.getJSON( "api/" + term)
                         .done(function(json){
                             var tweets = [];
+                            var common = [];
                             console.log(json)
                             console.log(json['statuses']);
                             $.each(json.statuses, function(index, value){
                                 tweets.push("<div class='col-sm-4 tweet'>" + value.text + "</div>")
                             });
+                            $.each(json.most_common, function(index,value){
+                                common.push("<tr><td>" + value[0] + "</td><td>" + value[1] + "</td></tr>");
+                            });
                             
+                            $("#mostcommon tbody").html(common.join(""));
+
                             $("#tweetcontainer").html(tweets.join(""));
                             $("#tweetcontainer").masonry({
                               columnWidth: 200,
                               itemSelector: '.tweet'
                             });
                             $("#pop").removeClass("hidden");
+                            $("#mostcommon").removeClass("hidden");
+                            $("common-header").removeClass("hidden");
                         })
                         .fail(function(jqxhr, textStatus, error){
                             console.log(error)
