@@ -40,6 +40,12 @@
                 margin-right: 4px;
                 padding: 10px;
             }
+            .positive{
+                color: #00ff00;
+            }
+            .negative{
+                color: #ff0000
+            }
             
         </style>
     </head>
@@ -68,8 +74,42 @@
                         </tbody>
                         
                     </table>    
-                    <h4 class="hidden" id="common-header">10 most common words</h4>
-                    <table class="table table-striped hidden" id="mostcommon">
+                    
+                    
+                </div>
+                <div class="col-md-8 col-sm-8 hidden" id="tweets">
+                    <div role="tabpanel">
+
+  <!-- Nav tabs -->
+                      <ul class="nav nav-tabs" role="tablist">
+                        <li role="presentation" class="active"><a href="#tweetbox" aria-controls="tweetbox" role="tab" data-toggle="tab">Tweets</a></li>
+                        <li role="presentation"><a href="#words" aria-controls="words" role="tab" data-toggle="tab">Common Words</a></li>
+                        <li role="presentation"><a href="#sentiment" aria-controls="sentiment" role="tab" data-toggle="tab">Keyword Sentiment</a></li>
+                        <li role="presentation"><a href="#map" aria-controls="map" role="tab" data-toggle="tab">Map</a></li>
+                      </ul>
+
+                      <!-- Tab panes -->
+                      <div class="tab-content">
+                        <div role="tabpanel" class="tab-pane active" id="tweetbox">
+                            <table class="table table-striped" id="populartweets">
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Tweet</th>
+                                <th>Favorites</th>
+                                <th>Retweets</th>
+                            </tr>
+                            
+                        </thead>
+                        <tbody>
+                            
+                        </tbody>
+                    </table>
+                              
+                                <div class="row show-grid" id="tweetcontainer"></div>
+                          </div>
+                        <div role="tabpanel" class="tab-pane" id="words">
+                            <table class="table table-striped" id="mostcommon">
                         <thead>
                             <tr>
                                 <th>Word</th>
@@ -80,13 +120,47 @@
                         <tbody>
                             
                         </tbody>
-                    </table>
+                    </table>  
+                        </div>
+                    <div role="tabpanel" class="tab-pane" id="sentiment">
+                       <table class="table table-striped" id="keyword-sentiment">
+                        <thead>
+                            <tr>
+                                <th>Keyword</th>
+                                <th>Relevence</th>
+                                <th>Score</th>
+                                <th>Sentiment></th>
+                            </tr>
+                            
+                        </thead>
+                        <tbody>
+                            
+                        </tbody>
+                    </table> 
+                          
+                    </div>
+                        <div role="tabpanel" class="tab-pane" id="map">todo</div>
+                      </div>
+
+                    </div>
+                    
+                    
+                    
+                    
+                    
+                    
                 </div>
-                <div class="col-md-8 col-sm-8" id="tweets">
-                    <h4 class="hidden" id="pop">Popular Tweets</h4>
-                    <div class="row show-grid" id="tweetcontainer"></div>
-                <div>
+                <div class="col-md-8 col-sm-8 hidden" id="loading">
+                    <h4>Loading data...</h4>
+                    <div class="progress">
+                      <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="65" aria-valuemin="0" aria-valuemax="100" style="width: 65%">
+                        <span class="sr-only">65% Complete</span>
+                      </div>
+                    </div>
+                </div>
+                
             </div>
+                            
             <div class="row">
                 <div class="col-md-12">
                     <div id="map-canvas"></div>
@@ -98,33 +172,52 @@
             $(function(){
                 //set up clicking on a trending topic
                 $(".trend").on('click',function(evt){
+                    $("#tweets").addClass("hidden");
+                    $("#loading").removeClass("hidden");
                     var term = $(this).data('term');
                     $.getJSON( "api/" + term)
                         .done(function(json){
+                            $("#loading").addClass("hidden");
+                            $("#tweets").removeClass("hidden");
+                        
                             var tweets = [];
                             var common = [];
-                            console.log(json)
-                            console.log(json['statuses']);
+                            var keywords = [];
+                            
+                            var tweetstring, keystring;
+                        
+                            console.log(json);
+                            
                             $.each(json.statuses, function(index, value){
-                                tweets.push("<div class='col-sm-4 tweet'>" + value.text + "</div>")
+                                tweetstring = "<tr><td><a target='new' href='https://twitter.com/" + value.user.screen_name + "'>@" + value.user.screen_name + "</a></td>";
+                                tweetstring += "<td>" + value.text + "</td>";
+                                tweetstring += "<td>" + value.favorite_count + "</td>";
+                                tweetstring += "<td>" + value.retweet_count + "</td></tr>"
+                                tweets.push(tweetstring);
+                                //tweets.push("<div class='col-sm-4 tweet'>" + value.text + "</div>");
                             });
                             $.each(json.most_common, function(index,value){
                                 common.push("<tr><td>" + value[0] + "</td><td>" + value[1] + "</td></tr>");
                             });
+                            $.each(json.sentiment.keywords, function(index, value){
+                                keystring = "<tr><td>" + value.text + "</td>";
+                                keystring += "<td>" + value.relevance + "</td>";
+                                keystring += "<td class='" + value.sentiment.type + "'>" + value.sentiment.score + "</td>";
+                                keystring += "<td class='" + value.sentiment.type + "'>" + value.sentiment.type + "</td></tr>";
+                                keywords.push(keystring);
+                                
+                            });
                             
                             $("#mostcommon tbody").html(common.join(""));
+                            $("#keyword-sentiment").html(keywords.join(""));
 
-                            $("#tweetcontainer").html(tweets.join(""));
-                            $("#tweetcontainer").masonry({
-                              columnWidth: 200,
-                              itemSelector: '.tweet'
-                            });
-                            $("#pop").removeClass("hidden");
-                            $("#mostcommon").removeClass("hidden");
-                            $("common-header").removeClass("hidden");
+                            $("#populartweets tbody").html(tweets.join(""));
+                            
+                            
+                            
                         })
                         .fail(function(jqxhr, textStatus, error){
-                            console.log(error)
+                            console.log(error);
                     });
                   
                 });
