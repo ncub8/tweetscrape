@@ -15,22 +15,22 @@
         <!-- Latest compiled and minified JavaScript -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/masonry/3.2.2/masonry.pkgd.js"></script>
-        <script type="text/javascript"
+        
+        <!-- script type="text/javascript"
       src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAzaQ46kaKTR3RD1h0HYwx4Nk62Z9SnF-8">
-    </script>
-    <script type="text/javascript">
-      function initialize() {
-        var mapOptions = {
-          center: { lat: -34.397, lng: 150.644},
-          zoom: 8
-        };
-        var map = new google.maps.Map(document.getElementById('map-canvas'),
-            mapOptions);
-      }
-      google.maps.event.addDomListener(window, 'load', initialize);
-    </script>
+    </script -->
+   
         <style>
+            html{
+                height: 100%;
+            }
+            #map{
+                height: 700px;
+            }
+            #map-canvas{
+                
+                height: 700px;
+            }
             .show-grid div{
                 background-color: #CCCCCC;
                 border: 1px solid #000000;
@@ -85,7 +85,6 @@
                         <li role="presentation" class="active"><a href="#tweetbox" aria-controls="tweetbox" role="tab" data-toggle="tab">Tweets</a></li>
                         <li role="presentation"><a href="#words" aria-controls="words" role="tab" data-toggle="tab">Common Words</a></li>
                         <li role="presentation"><a href="#sentiment" aria-controls="sentiment" role="tab" data-toggle="tab">Keyword Sentiment</a></li>
-                        <li role="presentation"><a href="#map" aria-controls="map" role="tab" data-toggle="tab">Map</a></li>
                       </ul>
 
                       <!-- Tab panes -->
@@ -139,8 +138,7 @@
                     </table> 
                           
                     </div>
-                        <div role="tabpanel" class="tab-pane" id="map">todo</div>
-                      </div>
+                       
 
                     </div>
                     
@@ -161,11 +159,11 @@
                 
             </div>
                             
-            <div class="row">
+            <!--div class="row">
                 <div class="col-md-12">
                     <div id="map-canvas"></div>
                 </div>
-            </div>
+            </div -->
         </div>
         <script>
             //temporary inline script
